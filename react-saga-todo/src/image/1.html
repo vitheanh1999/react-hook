@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+
+h1 { font-size: 2em; }
+#thumb_output { 
+  padding: 0; 
+  margin: 0 ;
+  width: 100%;
+  list-style-type: none; 
+  display: flex;
+}
+
+#thumb_output li { 
+  cursor: move;
+  margin: 0 3px 3px 3px; 
+  padding: 0.3em; 
+  
+  font-size: 1.25em; 
+  height: 6em; 
+  width: 50%;
+  border: 1px solid #d3d3d3;
+	background: #e6e6e6;
+}
+
+#thumb_output div  { 
+  font-family: FontAwesome;
+  font-size: 0.5em;
+  letter-spacing: 10px;
+  width: 10px;
+}
+
+#thumb_output .up, #thumb_output .down { float: left; }
+#thumb_output .up:before { content: "\f077"; }
+#thumb_output .down:before { content: "\f078"; }
+
+#img_contain img {
+    width: 170px;
+    height: 120px;
+    display: block;
+}
+.imageThumb{
+    width: 100%;
+    height: 100px;
+}
+#img_contain {
+    position: relative;
+}
+
+#img_contain label {
+    background: #39D2B4;
+    padding: 5px 20px;
+    color: #fff;
+    font-weight: bold;
+    font-size: .9em;
+    transition: all .4s;
+}
+
+#img_contain input {
+    position: absolute;
+    display: inline-block;
+    left: 0;
+    top: 0;
+    opacity: 0.01;
+    cursor: pointer;
+}
+
+#img_contain input:hover+label, #img_contain input:focus+label {
+    background: #34495E;
+    color: #39D2B4;
+}
+
+.removeimg {
+    display: block
+}
+    </style>
+</head>
+<body>
+    <div class="field  form-group col-sm-12 col-lg-12 field" align="left">
+        <div id='img_contain'>
+            <input type="file" id="files" name="image[]" multiple/>
+            <label for="file">Upload your image</label>
+        </div>
+        <ul id="thumb_output"></ul>
+
+    </div>
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.10.2/Sortable.min.js"></script>
+<script>
+ $(function() {
+    new Sortable(thumb_output, {
+    animation: 150,
+    ghostClass: 'blue-background-class'
+  });
+    if (window.File && window.FileList && window.FileReader) {
+                $("#files").on("change", function (e) {
+                    var files = e.target.files,
+                            filesLength = files.length;
+                    for (var i = 0; i < filesLength; i++) {
+                        var f = files[i]
+                        var fileReader = new FileReader();
+                        fileReader.onload = (function (e) {
+                            var file = e.target;
+                            var img = $("<li class=\"pip\">" +
+                                    "<img data-action=\"zoom\" class=\"imageThumb\" src=\"" + e.target.result + "\" title=\"" + file.name + "\"/>" +
+                                    "<br/><button class=\"removeimg\">x</button>" +
+                                    "</li>").insertAfter("#files");
+
+                            $(".removeimg").click(function () {
+                                $(this).parent(".pip").remove();
+                            });
+                            $('#thumb_output').append(img);
+
+                        });
+                        fileReader.readAsDataURL(f);
+                    }
+                });
+            } else {
+                alert("Your browser doesn't support to File API")
+            }
+  });
+</script>
+</html>
